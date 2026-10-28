@@ -1428,9 +1428,23 @@ def update_cmd(module_name: Optional[str], assistant: Optional[str], verbose: bo
 
                 # Update the registry with actual installed skills (may include prefixed names)
                 inst.skills = list(ctx.installed_skills)
-                inst.commands = list(ctx.current_commands)
-                inst.agents = list(ctx.current_agents)
-                inst.mcps = list(ctx.current_mcps)
+                path_context = inst.project_path or ""
+                inst.commands = (
+                    list(ctx.current_commands)
+                    if ctx.target.get_command_path(path_context, scope)
+                    else []
+                )
+                inst.agents = (
+                    list(ctx.current_agents)
+                    if ctx.target.supports_agents
+                    and ctx.target.get_agent_path(path_context, scope)
+                    else []
+                )
+                inst.mcps = (
+                    list(ctx.current_mcps)
+                    if ctx.target.get_mcp_path(path_context, scope)
+                    else []
+                )
                 inst.has_instructions = result.instructions_ok
                 registry.add(inst)
 

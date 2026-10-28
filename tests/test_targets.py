@@ -17,6 +17,7 @@ import yaml
 
 from lola.targets import (
     ClaudeCodeTarget,
+    CodexTarget,
     CursorTarget,
     GeminiTarget,
     OpenClawTarget,
@@ -602,6 +603,7 @@ Agent body content.
     "target_class",
     [
         ClaudeCodeTarget,
+        CodexTarget,
         CopilotCliTarget,
         CursorTarget,
         OpenClawTarget,
@@ -630,6 +632,7 @@ def test_file_based_targets_replace_skill_directory_symlink(
     "target_class",
     [
         ClaudeCodeTarget,
+        CodexTarget,
         CopilotCliTarget,
         CursorTarget,
         OpenClawTarget,
@@ -662,7 +665,10 @@ def test_file_based_targets_replace_skill_file_symlinks(
     assert external_notes.read_text() == "external notes"
 
 
-@pytest.mark.parametrize("target_class", [CursorTarget, OpenClawTarget])
+@pytest.mark.parametrize(
+    "target_class",
+    [CodexTarget, CursorTarget, OpenClawTarget],
+)
 def test_invalid_skill_does_not_remove_destination_symlink(
     target_class, tmp_path: Path, dest_path: Path
 ) -> None:
