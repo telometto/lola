@@ -4,8 +4,9 @@ import json
 from pathlib import Path
 
 from behave import given, then
+from behave.runner import Context
 
-from support.cli import resolve_path
+from support.cli import read_normalized, resolve_path
 from support.fixtures import (
     create_module_full,
     register_module,
@@ -87,3 +88,24 @@ def step_file_exists(context, path):
     """Assert that a file exists at the resolved path."""
     resolved = resolve_path(context, path)
     assert Path(resolved).is_file(), f"Expected file to exist: {resolved}"
+
+
+@given('a file "{path}" containing:')
+def step_file_content(context: Context, path: str) -> None:
+    """Create a fixture file from a Gherkin doc string."""
+    content = context.text
+    assert isinstance(content, str), "Provide a Gherkin doc string"
+    resolved = Path(resolve_path(context, path))
+    resolved.parent.mkdir(parents=True, exist_ok=True)
+    resolved.write_text(content + "\n", encoding="utf-8")
+
+
+@then('the file "{path}" should contain:')
+def step_file_contains(context: Context, path: str) -> None:
+    """Assert a Gherkin doc string appears in a generated file."""
+    content = context.text
+    assert isinstance(content, str), "Provide a Gherkin doc string"
+    resolved = Path(resolve_path(context, path))
+    assert content in read_normalized(resolved), (
+        f"Expected {resolved} to contain: {content}"
+    )

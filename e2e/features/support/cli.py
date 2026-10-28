@@ -32,11 +32,20 @@ class LolaResult:
 
 
 class LolaCLI:
-    """Subprocess wrapper that invokes `lola` with an isolated LOLA_HOME."""
+    """Run `lola` with isolated registry and user configuration paths."""
 
-    def __init__(self, lola_home: Path, work_dir: Path):
+    def __init__(self, lola_home: Path, work_dir: Path) -> None:
         """Initialize with the LOLA_HOME path and working directory."""
-        self.env = {**os.environ, "LOLA_HOME": str(lola_home)}
+        user_home = lola_home.parent / "home"
+        user_home.mkdir(parents=True, exist_ok=True)
+        self.env = {
+            **os.environ,
+            "LOLA_HOME": str(lola_home),
+            "HOME": str(user_home),
+            "USERPROFILE": str(user_home),
+            "CODEX_HOME": str(user_home / ".codex"),
+            "XDG_CONFIG_HOME": str(user_home / ".config"),
+        }
         self.work_dir = work_dir
 
     def run(self, *args: str, timeout: int = 30) -> LolaResult:
@@ -63,7 +72,7 @@ def resolve_path(context, text: str) -> str:
     replacements = {
         "{lola_home}": str(context.lola_home),
         "{project}": str(context.project_dir),
-        "{home}": str(Path.home()),
+        "{home}": context.cli.env["HOME"],
         "{tmp}": str(context.tmp_dir),
     }
     if hasattr(context, "server_url"):

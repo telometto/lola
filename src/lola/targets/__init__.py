@@ -32,6 +32,7 @@ from lola.targets.base import (
 
 # Concrete target implementations
 from lola.targets.claude_code import ClaudeCodeTarget
+from lola.targets.codex import CodexTarget
 from lola.targets.copilot import CopilotCliTarget, CopilotVSCodeTarget
 from lola.targets.cursor import CursorTarget
 from lola.targets.gemini import GeminiTarget, _convert_to_gemini_args
@@ -55,6 +56,7 @@ from lola.targets.install import (
 
 TARGETS: dict[str, AssistantTarget] = {
     "claude-code": ClaudeCodeTarget(),
+    "codex": CodexTarget(),
     "copilot-cli": CopilotCliTarget(),
     "copilot-vscode": CopilotVSCodeTarget(),
     "cursor": CursorTarget(),
@@ -101,6 +103,7 @@ __all__ = [
     "MCPSupportMixin",
     # Concrete targets
     "ClaudeCodeTarget",
+    "CodexTarget",
     "CopilotCliTarget",
     "CopilotVSCodeTarget",
     "CursorTarget",
