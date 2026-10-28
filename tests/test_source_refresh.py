@@ -1,6 +1,7 @@
 """Source refresh preserves the content selected during registration."""
 
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -97,8 +98,22 @@ def test_refresh_updates_installed_skill(
     assert registered.skills == ["review"]
 
 
-def test_refresh_preserves_pinned_git_content(tmp_path: Path) -> None:
+def test_refresh_preserves_pinned_git_content(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Refreshing a nested Git module keeps its identity, ref, and content."""
+    # Isolate fixture commits and Lola's clones from developer Git settings.
+    empty_git_dir = tmp_path / "empty-git"
+    empty_git_dir.mkdir()
+    monkeypatch.setenv("GIT_CONFIG_NOSYSTEM", "1")
+    monkeypatch.setenv("GIT_CONFIG_GLOBAL", os.devnull)
+    monkeypatch.delenv("GIT_CONFIG_PARAMETERS", raising=False)
+    monkeypatch.setenv("GIT_CONFIG_COUNT", "1")
+    monkeypatch.setenv("GIT_CONFIG_KEY_0", "core.hooksPath")
+    monkeypatch.setenv("GIT_CONFIG_VALUE_0", str(empty_git_dir))
+    monkeypatch.setenv("GIT_TEMPLATE_DIR", str(empty_git_dir))
+
     source = tmp_path / "repository.git"
     source.mkdir()
     _git(source, "init", "--initial-branch=main")
@@ -200,7 +215,7 @@ def test_refresh_updates_archive_content(
 
 
 def _git(repository: Path, *args: str) -> None:
-    """Run Git locally without inheriting the developer's commit identity."""
+    """Run fixture Git commands with output visible to pytest's capture."""
     subprocess.run(
         [
             "git",
@@ -216,5 +231,4 @@ def _git(repository: Path, *args: str) -> None:
         ],
         cwd=repository,
         check=True,
-        capture_output=True,
     )
