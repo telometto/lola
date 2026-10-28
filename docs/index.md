@@ -13,7 +13,7 @@ lola mod add https://github.com/myorg/compliance-skills.git
 # Use everywhere
 lola install compliance-skills
 
-# Skills now in: Claude Code, Cursor, Gemini CLI, OpenCode
+# Skills now in: Claude Code, Codex CLI, Cursor, Gemini CLI, OpenCode
 ```
 
 ## Supported AI Assistants
@@ -21,10 +21,16 @@ lola install compliance-skills
 | Assistant   | Skills                                  | Commands                          | Agents                          |
 | ----------- | --------------------------------------- | --------------------------------- | ------------------------------- |
 | Claude Code | `.claude/skills/<skill>/SKILL.md`       | `.claude/commands/<cmd>.md`       | `.claude/agents/<agent>.md`     |
+| Codex CLI | `.agents/skills/<skill>/SKILL.md` | N/A | N/A |
 | Cursor      | `.cursor/skills/<skill>/SKILL.md`       | `.cursor/commands/<cmd>.md`       | `.cursor/agents/<agent>.md`     |
 | Gemini CLI  | `GEMINI.md`                             | `.gemini/commands/<cmd>.toml`     | N/A                             |
 | OpenClaw    | `~/.openclaw/workspace/skills/<skill>/SKILL.md` | N/A                       | N/A                             |
 | OpenCode    | `AGENTS.md`                             | `.opencode/commands/<cmd>.md`     | `.opencode/agents/<agent>.md`   |
+
+Select Codex with `lola install <module> -a codex`. Add `--scope user` to
+install into `~/.agents/skills/`. See the
+[Codex CLI reference](cli-reference/index.md#codex-cli) for lifecycle and
+declarative sync examples.
 
 ## Quick Install
 

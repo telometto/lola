@@ -14,6 +14,7 @@ Lola is a universal AI Package Manager. If an agent's skills were an RPM, Lola i
 | Assistant         | Skills | Commands | Agents |
 | ----------------- | ------ | -------- | ------ |
 | Claude Code       | Yes    | Yes      | Yes    |
+| Codex CLI         | Yes    | N/A      | N/A    |
 | Copilot CLI       | Yes    | Yes      | Yes    |
 | Copilot (VS Code) | Yes    | Yes¹     | Yes    |
 | Cursor            | Yes    | Yes      | Yes    |
@@ -33,6 +34,12 @@ GitHub Copilot has two targets that share the same `.github/` (project) and
 
 When no assistant is selected explicitly, `copilot-vscode` is preferred over
 `copilot-cli` to avoid writing the same project files twice.
+
+Use `-a codex` to install native Codex skills into `.agents/skills/`, or
+add `--scope user` for `~/.agents/skills/`. Codex is also included in
+default installs and syncs. This target manages skills only; commands,
+agents, MCP configuration, and module instructions are skipped.
+See the [Codex CLI examples](docs/cli-reference/index.md#codex-cli).
 
 ## Installation
 
@@ -300,6 +307,7 @@ Load the template from: `./templates/example.md`
 | Assistant | Skill Location | Supporting Files | Path Behavior |
 |-----------|---------------|------------------|---------------|
 | Claude Code | `.claude/skills/<skill>/SKILL.md` | Copied with skill | Paths work as-is |
+| Codex CLI | `.agents/skills/<skill>/SKILL.md` | Copied | Paths work as-is |
 | Cursor | `.cursor/rules/<skill>.mdc` | Stay in `.lola/modules/` | Paths rewritten automatically |
 | Gemini | `GEMINI.md` (references only) | Stay in `.lola/modules/` | Paths work (SKILL.md read from source) |
 | OpenCode | `AGENTS.md` (references only) | Stay in `.lola/modules/` | Paths work (SKILL.md read from source) |
