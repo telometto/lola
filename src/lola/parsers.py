@@ -907,7 +907,9 @@ def update_module(module_path: Path) -> str:
         tmp_path = Path(tmp_dir)
 
         try:
-            new_path = handler.fetch(source, tmp_path, ref=ref)
+            new_path = handler.fetch(
+                source, tmp_path, module_content_dirname=content_dirname, ref=ref
+            )
 
             # Rename to match expected module name if needed
             if new_path.name != module_name:
