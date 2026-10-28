@@ -100,7 +100,16 @@ class LolaResult:
 
 class LolaCLI:
     def __init__(self, lola_home: Path, work_dir: Path):
-        self.env = {**os.environ, "LOLA_HOME": str(lola_home)}
+        user_home = lola_home.parent / "home"
+        user_home.mkdir(parents=True, exist_ok=True)
+        self.env = {
+            **os.environ,
+            "LOLA_HOME": str(lola_home),
+            "HOME": str(user_home),
+            "USERPROFILE": str(user_home),
+            "CODEX_HOME": str(user_home / ".codex"),
+            "XDG_CONFIG_HOME": str(user_home / ".config"),
+        }
         self.work_dir = work_dir
 
     def run(self, *args: str) -> LolaResult:
@@ -146,7 +155,10 @@ func (c *LolaCLI) Run(args ...string) LolaResult {
 
 ### 2. Scenario isolation
 
-Every scenario gets a fresh temp directory with its own `LOLA_HOME` and project directory. No scenario can leak state to another.
+Every scenario gets temporary registry, user-home, and project directories.
+The CLI wrapper sets `LOLA_HOME`, `HOME`, `USERPROFILE`, `CODEX_HOME`, and
+`XDG_CONFIG_HOME` inside that directory. User-scoped installs cannot write
+into the real account. `{home}` resolves to the subprocess's isolated home.
 
 ```python
 # python/environment.py
@@ -243,7 +255,7 @@ def resolve_path(context, text):
     replacements = {
         "{lola_home}": str(context.lola_home),
         "{project}": str(context.project_dir),
-        "{home}": str(Path.home()),
+        "{home}": context.cli.env["HOME"],
         "{tmp}": str(context.tmp_dir),
     }
     for name, path in context.modules.items():
